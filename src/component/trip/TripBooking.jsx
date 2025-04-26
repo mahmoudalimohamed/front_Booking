@@ -10,7 +10,7 @@ import {
   confirmTripBookingApi,
   fetchPaymentKeyApi,
   redirectToPaymentApi,
-} from "../api/booking";
+} from "../../api/booking";
 
 const TripBooking = () => {
   const { tripId } = useParams();

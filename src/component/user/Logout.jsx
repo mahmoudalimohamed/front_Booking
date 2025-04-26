@@ -1,6 +1,6 @@
 // src/component/Logout.js
 import React from 'react';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../../context/AuthContext'; // Import useAuth
 
 const Logout = () => {
   const { logout } = useAuth(); // Use auth context

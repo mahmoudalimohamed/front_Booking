@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });

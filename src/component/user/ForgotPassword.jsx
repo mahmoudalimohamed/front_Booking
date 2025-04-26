@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Mail, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import {forgotPasswordApi} from '../api/auth';
+import {forgotPasswordApi} from '../../api/auth';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import cover from '../assets/cover.png';
-import { locationsyApi, tripSearchApi } from '../api/booking';
+import cover from '../../assets/cover.png';
+import { locationsyApi, tripSearchApi } from '../../api/booking';
 
 const TripSearch = () => {
 

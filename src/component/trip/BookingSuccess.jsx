@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { bookingDetailApi } from "../api/booking";
+import { bookingDetailApi } from "../../api/booking";
 
 const BookingSuccess = () => {
   const [loading, setLoading] = useState(true);

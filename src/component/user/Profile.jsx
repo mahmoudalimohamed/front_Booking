@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cancelBookingApi, fetchProfileApi } from '../api/booking';
+import { cancelBookingApi, fetchProfileApi } from '../../api/booking';
 
 const getStatusStyles = (status) => {
   switch (status) {

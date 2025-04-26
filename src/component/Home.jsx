@@ -1,4 +1,4 @@
-import TripSearch from './TripSearch';
+import TripSearch from '../component/trip/TripSearch';
 
 export default function Home() {
   return (

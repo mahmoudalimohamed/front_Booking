@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, Mail, Phone, Lock, User, Loader2 } from 'lucide-react';
-import {registerApi} from '../api/auth'; // Adjust the import path as necessary
+import {registerApi} from '../../api/auth'; // Adjust the import path as necessary
 const Register = () => {
   const {
     register,
