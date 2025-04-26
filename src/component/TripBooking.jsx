@@ -3,6 +3,14 @@ import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BusLayout from "./BusLayout";
 import MiniBusLayout from "./MiniBusLayout";
+import {
+  userProfileApi,
+  tripBookingApi,
+  postTripBookingApi,
+  confirmTripBookingApi,
+  fetchPaymentKeyApi,
+  redirectToPaymentApi,
+} from "../api/booking";
 
 const TripBooking = () => {
   const { tripId } = useParams();
@@ -28,11 +36,9 @@ const TripBooking = () => {
 
   const loadUserType = useCallback(async () => {
     try {
-      const token = localStorage.getItem("access");
-      const { data } = await axios.get("http://127.0.0.1:8000/api/profile/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await userProfileApi();
       setUserType(data.user.user_type);
+      console.log("User Type:", data.user.user_type);
     } catch (err) {
       setErrorMessage("Failed to fetch user type.");
       console.error("User type loading error:", err);
@@ -42,11 +48,8 @@ const TripBooking = () => {
   const loadSeats = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("access");
-      const { data } = await axios.get(
-        `http://127.0.0.1:8000/api/trips/${tripId}/book/`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+
+      const { data } = await tripBookingApi(tripId);
       const allSeats = Object.keys(data.seat_status || {}).map((seatNum) => ({
         seat_number: parseInt(seatNum),
         status: data.seat_status[seatNum],
@@ -54,7 +57,9 @@ const TripBooking = () => {
       const bookedSeats = allSeats
         .filter((seat) => seat.status !== "available")
         .map((seat) => seat.seat_number);
-      const sortedSeats = allSeats.sort((a, b) => a.seat_number - b.seat_number);
+      const sortedSeats = allSeats.sort(
+        (a, b) => a.seat_number - b.seat_number
+      );
       setAvailableSeats(sortedSeats);
       setUnavailableSeats(bookedSeats);
       setErrorMessage("");
@@ -98,13 +103,15 @@ const TripBooking = () => {
       return;
     }
     if (userType === "Admin" && (!customerName || !customerPhone)) {
-      setErrorMessage("Customer name and phone are required for admin bookings.");
+      setErrorMessage(
+        "Customer name and phone are required for admin bookings."
+      );
       return;
     }
 
     setIsSubmitting(true);
     setIsProcessing(true);
-    const token = localStorage.getItem("access");
+
     const bookingData = {
       seats_booked: chosenSeats.length,
       selected_seats: chosenSeats,
@@ -112,19 +119,15 @@ const TripBooking = () => {
     };
 
     if (userType === "Admin") {
-      bookingData.customer_name = customerName; // Add customer name
-      bookingData.customer_phone = customerPhone; // Add customer phone
+      bookingData.customer_name = customerName; 
+      bookingData.customer_phone = customerPhone; 
     }
 
     // Log the bookingData object here
     console.log("Booking Data Sent to Backend:", bookingData);
 
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/trips/${tripId}/book/`,
-        bookingData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await postTripBookingApi(tripId, bookingData);
       setTempBookingRef(response.data.temp_booking_ref);
       setShowProcessingOverlay(true);
       setErrorMessage("");
@@ -141,14 +144,12 @@ const TripBooking = () => {
 
     setIsProcessing(true);
     setIsConfirmed(true);
-    const token = localStorage.getItem("access");
 
     try {
       const confirmationData = {
         temp_booking_ref: tempBookingRef,
       };
 
-      // Include customer details if the user is an admin
       if (userType === "Admin") {
         confirmationData.customer_name = customerName;
         confirmationData.customer_phone = customerPhone;
@@ -156,27 +157,22 @@ const TripBooking = () => {
 
       console.log("Confirmation Data Sent to Backend:", confirmationData);
 
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/trips/${tripId}/confirm/${tempBookingRef}/`,
-        confirmationData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      const response = await confirmTripBookingApi(
+        tripId,
+        tempBookingRef,
+        confirmationData
+      ); 
       const { order_id, booking, redirect_url } = response.data;
       setBookingData({ order_id, booking, redirect_url });
       setShowProcessingOverlay(false);
 
       if (paymentType === "online" && order_id) {
-        const paymentResponse = await fetch(
-          `http://127.0.0.1:8000/api/get_payment_key/${order_id}/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!paymentResponse.ok) throw new Error("Failed to fetch payment key");
-        const paymentData = await paymentResponse.json();
+        const paymentResponse = await fetchPaymentKeyApi(order_id); 
+        const paymentData = paymentResponse.data;
         const paymentKey = paymentData.payment_key;
         if (!paymentKey) throw new Error("Invalid payment key received");
         setBookingData((prev) => ({ ...prev, paymentKey }));
-        window.location.href = `https://accept.paymob.com/api/acceptance/iframes/908347?payment_token=${paymentKey}`;
+        redirectToPaymentApi(paymentKey);
       } else {
         if (redirect_url) {
           window.location.href = redirect_url;
@@ -206,7 +202,9 @@ const TripBooking = () => {
       setErrorMessage(err.response.data.error);
       loadSeats();
     } else {
-      setErrorMessage(err.response?.data?.error || err.message || "Failed to process booking");
+      setErrorMessage(
+        err.response?.data?.error || err.message || "Failed to process booking"
+      );
       console.error("Booking error:", err);
     }
     setShowProcessingOverlay(false);
@@ -245,19 +243,27 @@ const TripBooking = () => {
                     </h4>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">From</span>
-                      <span className="text-gray-900">{tripInfo?.start_location}</span>
+                      <span className="text-gray-900">
+                        {tripInfo?.start_location}
+                      </span>
                     </p>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">To</span>
-                      <span className="text-gray-900">{tripInfo?.destination}</span>
+                      <span className="text-gray-900">
+                        {tripInfo?.destination}
+                      </span>
                     </p>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">Date</span>
-                      <span className="text-gray-900">{formatTime(tripInfo?.departure_date)}</span>
+                      <span className="text-gray-900">
+                        {formatTime(tripInfo?.departure_date)}
+                      </span>
                     </p>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">Bus Type</span>
-                      <span className="text-gray-900">{tripInfo?.bus_type}</span>
+                      <span className="text-gray-900">
+                        {tripInfo?.bus_type}
+                      </span>
                     </p>
                   </div>
                   <div>
@@ -266,15 +272,21 @@ const TripBooking = () => {
                     </h4>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">Selected Seats</span>
-                      <span className="text-gray-900">{chosenSeats.join(", ")}</span>
+                      <span className="text-gray-900">
+                        {chosenSeats.join(", ")}
+                      </span>
                     </p>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">Total Amount</span>
-                      <span className="text-gray-900">{totalCost().toFixed(2)} EGP</span>
+                      <span className="text-gray-900">
+                        {totalCost().toFixed(2)} EGP
+                      </span>
                     </p>
                     <p className="text-lg text-[#A62C2C] flex justify-between">
                       <span className="font-medium">Payment Method</span>
-                      <span className="text-gray-900">{paymentType === "online" ? "Visa" : "Cash"}</span>
+                      <span className="text-gray-900">
+                        {paymentType === "online" ? "Visa" : "Cash"}
+                      </span>
                     </p>
                     {userType === "Admin" && (
                       <>
@@ -320,17 +332,23 @@ const TripBooking = () => {
               <div className="text-lg text-[#A62C2C] mb-1">From & To</div>
               <div className="flex items-center mb-2">
                 <div className="h-2 w-2 bg-indigo-500 rounded-full mr-2"></div>
-                <span className="font-medium text-gray-900">{tripInfo.start_location}</span>
+                <span className="font-medium text-gray-900">
+                  {tripInfo.start_location}
+                </span>
               </div>
               <div className="border-l-2 border-dashed border-gray-300 h-4 ml-1"></div>
               <div className="flex items-center">
                 <div className="h-2 w-2 bg-purple-500 rounded-full mr-2"></div>
-                <span className="font-medium text-gray-900">{tripInfo.destination}</span>
+                <span className="font-medium text-gray-900">
+                  {tripInfo.destination}
+                </span>
               </div>
             </div>
             <div className="mt-4 md:mt-0 md:ml-6 flex-1">
               <div className="text-lg text-[#A62C2C] mb-1">Departure Date</div>
-              <div className="font-medium">{formatTime(tripInfo.departure_date)}</div>
+              <div className="font-medium">
+                {formatTime(tripInfo.departure_date)}
+              </div>
             </div>
             <div className="mt-4 md:mt-0 md:ml-6 flex-1">
               <div className="text-lg text-[#A62C2C] mb-1">Bus Type</div>
@@ -365,7 +383,9 @@ const TripBooking = () => {
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
         {userType === "Admin" && (
           <div className="mb-4">
-            <label className="block text-lg text-[#A62C2C] mb-1">Customer Name</label>
+            <label className="block text-lg text-[#A62C2C] mb-1">
+              Customer Name
+            </label>
             <input
               type="text"
               value={customerName}
@@ -374,7 +394,9 @@ const TripBooking = () => {
               placeholder="Enter customer name"
               disabled={isSubmitting}
             />
-            <label className="block text-lg text-[#A62C2C] mt-2 mb-1">Customer Phone</label>
+            <label className="block text-lg text-[#A62C2C] mt-2 mb-1">
+              Customer Phone
+            </label>
             <input
               type="text"
               value={customerPhone}
@@ -405,7 +427,6 @@ const TripBooking = () => {
                 disabled={isSubmitting}
               >
                 <option value="online">Visa</option>
-
               </select>
             )}
           </div>
@@ -413,10 +434,11 @@ const TripBooking = () => {
             <button
               onClick={initiateBooking}
               disabled={isSubmitting}
-              className={`px-6 py-2 text-lg rounded-full transition ${isSubmitting
+              className={`px-6 py-2 text-lg rounded-full transition ${
+                isSubmitting
                   ? "bg-[#A62C2C] text-white hover:bg-[#8B2525] cursor-not-allowed"
                   : "bg-[#A62C2C] text-white hover:bg-[#8B2525]"
-                }`}
+              }`}
             >
               {isSubmitting ? "Processing..." : "Book Seats"}
             </button>

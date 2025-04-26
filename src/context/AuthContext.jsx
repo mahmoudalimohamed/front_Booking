@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { loginApi, logoutApi, refreshAccessTokenApi } from '../api/auth';
 
 const AuthContext = createContext();
 
@@ -37,10 +38,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { data } = await axios.post('http://127.0.0.1:8000/api/login/', {
-        email,
-        password,
-      });
+      const { data } = await loginApi(email, password); // << use loginApi
       localStorage.setItem('access', data.access);
       localStorage.setItem('refresh', data.refresh);
       localStorage.setItem('user', JSON.stringify({ email }));
@@ -55,17 +53,13 @@ export const AuthProvider = ({ children }) => {
       };
     }
   };
-
+  
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('refresh');
       const accessToken = localStorage.getItem('access');
       if (refreshToken && accessToken) {
-        await axios.post(
-          'http://127.0.0.1:8000/api/logout/',
-          { refresh: refreshToken },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
+        await logoutApi(refreshToken, accessToken); // << use logoutApi
       }
     } catch (error) {
       console.error('Logout failed:', error);
@@ -76,14 +70,12 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
     }
   };
-
+  
   const refreshToken = async () => {
     try {
       const refresh = localStorage.getItem('refresh');
       if (!refresh) throw new Error('No refresh token');
-      const { data } = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
-        refresh,
-      });
+      const { data } = await refreshAccessTokenApi(refresh); // << use refreshAccessTokenApi
       localStorage.setItem('access', data.access);
       setIsAuthenticated(true);
       return true;
@@ -93,6 +85,7 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
   };
+  
 
   useEffect(() => {
     const interceptor = axios.interceptors.response.use(

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Lock, Loader2 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
+import { resetPasswordApi } from '../api/auth'; 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -27,11 +27,7 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/password_reset/confirm/', {
-        token,
-        uid,  // Include uid in the request
-        password,
-      });
+      const response = await resetPasswordApi(token, uid, password); 
       setMessage(response.data.message);
       setTimeout(() => navigate('/login'), 2000); // Redirect to login after success
     } catch (error) {

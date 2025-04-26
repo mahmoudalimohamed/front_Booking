@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import cover from '../assets/cover.png';
+import { locationsyApi, tripSearchApi } from '../api/booking';
 
 const TripSearch = () => {
 
@@ -17,7 +18,7 @@ const TripSearch = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/locations/');
+        const response = await locationsyApi();
         setCities(response.data.cities || []);
         setError(null);
       } 
@@ -52,7 +53,7 @@ const TripSearch = () => {
     };
 
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/trips/search/', { params,});
+      const response = await tripSearchApi(params);
       setTrips(response.data || []);
       setError(null);
       setSearchPerformed(true);

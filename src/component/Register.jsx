@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, Mail, Phone, Lock, User, Loader2 } from 'lucide-react';
-
+import {registerApi} from '../api/auth'; // Adjust the import path as necessary
 const Register = () => {
   const {
     register,
@@ -26,7 +26,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/register/', data);
+      const response = await registerApi(data);
       setMessage('Registration successful!');
       navigate('/login');
       console.log(response.data);

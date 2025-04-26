@@ -1,45 +1,67 @@
-import { useState } from 'react';
-import { Search, MapPin, ChevronDown, Bus } from 'lucide-react';
+import { useState } from "react";
+import { Search, MapPin, ChevronDown, Bus } from "lucide-react";
 
 export default function Station() {
-  const [activeTab, setActiveTab] = useState('popular');
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  const [activeTab, setActiveTab] = useState("popular");
+  const [searchTerm, setSearchTerm] = useState("");
+
   const stations = {
     popular: [
-      { id: 1, name: 'Cairo', region: 'Capital' },
-      { id: 2, name: 'Alexandria', region: 'Coastal' },
-      { id: 3, name: 'Hurghada', region: 'Red Sea' },
-      { id: 4, name: 'Sharm El Sheikh', region: 'Sinai Peninsula' },
-      { id: 5, name: 'Luxor', region: 'Upper Egypt' },
-      { id: 6, name: 'Aswan', region: 'Upper Egypt' },
+      { id: 1, name: "Cairo", region: "Capital" },
+      { id: 2, name: "Alexandria", region: "Coastal" },
+      { id: 3, name: "Hurghada", region: "Red Sea" },
+      { id: 4, name: "Sharm El Sheikh", region: "Sinai Peninsula" },
+      { id: 5, name: "Luxor", region: "Upper Egypt" },
+      { id: 6, name: "Aswan", region: "Upper Egypt" },
     ],
     regions: [
-      { id: 'capital', name: 'Capital Region', stations: ['Cairo', 'Giza', '6th October'] },
-      { id: 'delta', name: 'Delta', stations: ['Tanta', 'Mansoura', 'Damietta'] },
-      { id: 'canal', name: 'Suez Canal', stations: ['Ismailia', 'Port Said', 'Suez'] },
-      { id: 'coastal', name: 'Coastal', stations: ['Alexandria', 'Marsa Matrouh', 'Damietta'] },
-      { id: 'upper', name: 'Upper Egypt', stations: ['Luxor', 'Aswan', 'Minya', 'Sohag'] },
+      {
+        id: "capital",
+        name: "Capital Region",
+        stations: ["Cairo", "Giza", "6th October"],
+      },
+      {
+        id: "delta",
+        name: "Delta",
+        stations: ["Tanta", "Mansoura", "Damietta"],
+      },
+      {
+        id: "canal",
+        name: "Suez Canal",
+        stations: ["Ismailia", "Port Said", "Suez"],
+      },
+      {
+        id: "coastal",
+        name: "Coastal",
+        stations: ["Alexandria", "Marsa Matrouh", "Damietta"],
+      },
+      {
+        id: "upper",
+        name: "Upper Egypt",
+        stations: ["Luxor", "Aswan", "Minya", "Sohag"],
+      },
     ],
     all: [
-      { id: 1, name: 'Cairo', region: 'Capital' },
-      { id: 2, name: 'Alexandria', region: 'Coastal' },
-      { id: 3, name: 'Luxor', region: 'Upper Egypt' },
-      { id: 4, name: 'Aswan', region: 'Upper Egypt' },
-      { id: 5, name: 'Hurghada', region: 'Red Sea' },
-      { id: 6, name: 'Sharm El Sheikh', region: 'Sinai Peninsula' },
-      { id: 7, name: 'Tanta', region: 'Delta' },
-      { id: 8, name: 'Mansoura', region: 'Delta' },
-      { id: 9, name: 'Ismailia', region: 'Suez Canal' },
-      { id: 10, name: 'Port Said', region: 'Suez Canal' },
-      { id: 11, name: 'Suez', region: 'Suez Canal' },
-      { id: 12, name: 'Giza', region: 'Capital' },
+      { id: 1, name: "Cairo", region: "Capital" },
+      { id: 2, name: "Alexandria", region: "Coastal" },
+      { id: 3, name: "Luxor", region: "Upper Egypt" },
+      { id: 4, name: "Aswan", region: "Upper Egypt" },
+      { id: 5, name: "Hurghada", region: "Red Sea" },
+      { id: 6, name: "Sharm El Sheikh", region: "Sinai Peninsula" },
+      { id: 7, name: "Tanta", region: "Delta" },
+      { id: 8, name: "Mansoura", region: "Delta" },
+      { id: 9, name: "Ismailia", region: "Suez Canal" },
+      { id: 10, name: "Port Said", region: "Suez Canal" },
+      { id: 11, name: "Suez", region: "Suez Canal" },
+      { id: 12, name: "Giza", region: "Capital" },
     ],
   };
 
   // Filter stations based on search term
-  const filteredStations = stations[activeTab === 'regions' ? 'all' : activeTab].filter(
-    station => station.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredStations = stations[
+    activeTab === "regions" ? "all" : activeTab
+  ].filter((station) =>
+    station.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const [expandedRegion, setExpandedRegion] = useState(null);
@@ -47,8 +69,12 @@ export default function Station() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-mono text-[#A62C2C]">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold font-mono text-[#A62C2C] mb-2">Destinations</h2>
-        <p className="font-mono text-[#A62C2C]">Find your next destination with our extensive network</p>
+        <h2 className="text-3xl font-bold font-mono text-[#A62C2C] mb-2">
+          Destinations
+        </h2>
+        <p className="font-mono text-[#A62C2C]">
+          Find your next destination with our extensive network
+        </p>
       </div>
 
       {/* Search Bar */}
@@ -69,31 +95,31 @@ export default function Station() {
       <div className="flex border-b border-gray-300 mb-6">
         <button
           className={`px-6 py-3 font-medium ${
-            activeTab === 'popular'
-              ? 'font-mono text-[#A62C2C]'
-              : 'text-gray-500 hover:text-blue-500'
+            activeTab === "popular"
+              ? "font-mono text-[#A62C2C]"
+              : "text-gray-500 hover:text-blue-500"
           }`}
-          onClick={() => setActiveTab('popular')}
+          onClick={() => setActiveTab("popular")}
         >
           Popular Destinations
         </button>
         <button
           className={`px-6 py-3 font-medium ${
-            activeTab === 'regions'
-              ? 'font-mono text-[#A62C2C]'
-              : 'text-gray-500 hover:text-blue-500'
+            activeTab === "regions"
+              ? "font-mono text-[#A62C2C]"
+              : "text-gray-500 hover:text-blue-500"
           }`}
-          onClick={() => setActiveTab('regions')}
+          onClick={() => setActiveTab("regions")}
         >
           By Region
         </button>
         <button
           className={`px-6 py-3 font-medium ${
-            activeTab === 'all'
-              ? 'font-mono text-[#A62C2C]'
-              : 'text-gray-500 hover:text-blue-500'
+            activeTab === "all"
+              ? "font-mono text-[#A62C2C]"
+              : "text-gray-500 hover:text-blue-500"
           }`}
-          onClick={() => setActiveTab('all')}
+          onClick={() => setActiveTab("all")}
         >
           All Destinations
         </button>
@@ -101,19 +127,28 @@ export default function Station() {
 
       {/* Content */}
       <div className="pb-8">
-        {activeTab === 'regions' ? (
+        {activeTab === "regions" ? (
           <div className="space-y-4">
             {stations.regions.map((region) => (
-              <div key={region.id} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div
+                key={region.id}
+                className="border border-gray-200 rounded-lg overflow-hidden"
+              >
                 <div
                   className="flex justify-between items-center p-4 bg-gray-50 cursor-pointer"
-                  onClick={() => setExpandedRegion(expandedRegion === region.id ? null : region.id)}
+                  onClick={() =>
+                    setExpandedRegion(
+                      expandedRegion === region.id ? null : region.id
+                    )
+                  }
                 >
-                  <h3 className="font-medium text-lg text-gray-800">{region.name}</h3>
+                  <h3 className="font-medium text-lg text-gray-800">
+                    {region.name}
+                  </h3>
                   <ChevronDown
                     size={20}
                     className={`font-mono text-[#A62C2C] transition-transform ${
-                      expandedRegion === region.id ? 'transform rotate-180' : ''
+                      expandedRegion === region.id ? "transform rotate-180" : ""
                     }`}
                   />
                 </div>
@@ -124,7 +159,10 @@ export default function Station() {
                         key={idx}
                         className="flex items-center p-3 rounded-md hover:bg-blue-50 cursor-pointer"
                       >
-                        <MapPin size={18} className="font-mono text-[#A62C2C] mr-2" />
+                        <MapPin
+                          size={18}
+                          className="font-mono text-[#A62C2C] mr-2"
+                        />
                         <span className="text-gray-700">{station}</span>
                       </div>
                     ))}
