@@ -6,9 +6,6 @@ export default function Privacy() {
           <h1 className="text-3xl font-bold text-[#A62C2C] mb-6">
             Our Privacy Policy
           </h1>
-          <h1 className="text-3xl font-bold text-[#A62C2C] mb-6">
-            Our Privacy Policy
-          </h1>
 
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="mb-4">
