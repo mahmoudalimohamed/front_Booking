@@ -95,7 +95,7 @@ const TripSearch = () => {
   return (
     <div className=" font-mono min-h-screen bg-cover bg-center  bg-no-repeat" style={{ backgroundImage: `url(${cover})` }}>
       <div className="min-h-screen bg-gradient-to-b from-transparent to-black/40 py-8 px-4">
-        <div className="max-w-6xl mx-auto pt-16 pb-8"> <br /><br />
+        <div className="max-w-6xl mx-auto pt-16 pb-8"> <br />
          {/*  <h1 className="text-5xl font-bold text-white text-center mb-10">Book Your Royal Bus Now</h1> <br/> */}
          <br/><br/>
          

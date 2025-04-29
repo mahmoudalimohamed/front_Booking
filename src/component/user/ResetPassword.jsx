@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Lock, Loader2 } from 'lucide-react';
+import { Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPasswordApi } from '../../api/auth'; 
+
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchParams] = useSearchParams();
@@ -40,9 +42,9 @@ const ResetPassword = () => {
   return (
     <div className="font-mono min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Lock className="h-12 w-12 text-indigo-600 mx-auto" />
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Set new password</h2>
-        <p className="mt-2 text-sm text-gray-600">Enter your new password below.</p>
+        <Lock className="h-12 w-12 font-mono text-[#A62C2C] mx-auto" />
+        <h2 className="mt-6 text-3xl font-extrabold text-[#A62C2C]">Set new password</h2>
+        <p className="mt-2 text-sm text-[#A62C2C]">Enter your new password below.</p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
@@ -56,20 +58,31 @@ const ResetPassword = () => {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'} // Toggle between text and password
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="••••••••"
                 minLength="8" // Add minimum length requirement
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <Eye className="h-5 w-5 text-gray-400" />
+                )}
+              </button>
             </div>
           </div>
           <button
             type="submit"
             disabled={isSubmitting || !token || !uid} // Add uid to disable condition
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
+            className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg bg-[#A62C2C] text-white hover:bg-[#8B2525] font-mono text-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
           >
             {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : 'Reset Password'}
           </button>

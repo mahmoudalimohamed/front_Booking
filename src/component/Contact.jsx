@@ -37,7 +37,7 @@ export default function Contact() {
   };
 
   return (
-    <div className=" bg-transparent shadow-md font-mono text-lg font-bold text-[#A62C2C] p-4">
+    <div className="bg-transparent shadow-md font-mono text-lg font-bold text-[#A62C2C] p-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold font-mono text-[#A62C2C]">
@@ -56,20 +56,24 @@ export default function Contact() {
             </h3>
 
             <div className="space-y-4">
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <Phone className="w-5 h-5 text-[#A62C2C] mr-4 mt-1 flex-shrink-0" />
-                <p className="mt-1 text-gray-600">010 6788 8876</p>
+                <div>
+                  <p className="text-gray-600">010 6788 8876</p>
+                </div>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <Mail className="w-5 h-5 text-[#A62C2C] mr-4 mt-1 flex-shrink-0" />
-                <p className="mt-1 text-gray-600">support@BUS-BOOKING.com</p>
+                <div>
+                  <p className="text-gray-600">support@BUS-BOOKING.com</p>
+                </div>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <MapPin className="w-5 h-5 text-[#A62C2C] mr-4 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="mt-1 text-gray-600">
+                  <p className="text-gray-600">
                     123 Transport Avenue
                     <br />
                     City Center, ST 12345
@@ -77,10 +81,10 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <MessageSquare className="w-5 h-5 text-[#A62C2C] mr-4 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="mt-1 text-gray-600">
+                  <p className="text-gray-600">
                     Monday - Friday: 8am - 8pm
                     <br />
                     Saturday & Sunday: 9am - 5pm
@@ -103,7 +107,7 @@ export default function Contact() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-4">
                 <div>
                   <label
                     htmlFor="name"
@@ -177,14 +181,14 @@ export default function Contact() {
                 </div>
                 <div>
                   <button
-                    type="submit"
+                    onClick={handleSubmit}
                     className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg bg-[#A62C2C] text-white hover:bg-[#8B2525] font-mono text-lg focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
                   >
                     <Send className="w-4 h-4 mr-2" />
                     Send Message
                   </button>
                 </div>
-              </form>
+              </div>
             )}
           </div>
         </div>

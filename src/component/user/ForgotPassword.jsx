@@ -27,9 +27,9 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-white to-purple-50 font-mono">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Mail className="h-12 w-12 text-indigo-600 mx-auto" />
-        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Reset your password</h2>
-        <p className="mt-2 text-sm text-gray-600">
+        <Mail className="h-12 w-12 font-mono text-[#A62C2C] mx-auto" />
+        <h2 className="mt-6 text-3xl font-extrabold text-[#A62C2C]">Reset your password</h2>
+        <p className="mt-2 text-sm font-mono text-[#A62C2C]">
           Enter your email to receive a password reset link.
         </p>
       </div>
@@ -37,7 +37,6 @@ const ForgotPassword = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-5 w-5 text-gray-400" />
@@ -57,8 +56,8 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150"
-          >
+            className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg bg-[#A62C2C] text-white hover:bg-[#8B2525] font-mono text-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+              >
             {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : 'Send Reset Link'}
           </button>
         </form>

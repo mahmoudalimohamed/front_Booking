@@ -2,8 +2,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, Mail, Phone, Lock, User, Loader2 } from 'lucide-react';
-import {registerApi} from '../../api/auth'; // Adjust the import path as necessary
+import { UserPlus, Mail, Phone, Lock, User, Loader2, Eye, EyeOff } from 'lucide-react';
+import { registerApi } from '../../api/auth'; // Adjust the import path as necessary
+
 const Register = () => {
   const {
     register,
@@ -21,6 +22,7 @@ const Register = () => {
 
   const [message, setMessage] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false); // State for toggling password visibility
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -48,7 +50,7 @@ const Register = () => {
     }
   };
 
-  const InputField = ({ id, label, icon: Icon, type = 'text', placeholder, validation, error }) => (
+  const InputField = ({ id, label, icon: Icon, type = 'text', placeholder, validation, error, togglePassword, showPassword }) => (
     <div className='font-mono'>
       <label htmlFor={id} className="block text-sm font-medium text-[#A62C2C]">
         {label}
@@ -60,7 +62,7 @@ const Register = () => {
         <input
           id={id}
           type={type}
-          className={`block w-full pl-10 pr-3 py-2 border ${
+          className={`block w-full pl-10 pr-10 py-2 border ${
             error ? 'border-red-300' : 'border-gray-300'
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? 'focus:ring-red-500' : 'focus:ring-indigo-500'
@@ -68,6 +70,19 @@ const Register = () => {
           placeholder={placeholder}
           {...register(id, validation)}
         />
+        {id === 'password' && (
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            onClick={togglePassword}
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5 text-gray-400" />
+            ) : (
+              <Eye className="h-5 w-5 text-gray-400" />
+            )}
+          </button>
+        )}
       </div>
       {error && (
         <p className="mt-2 text-sm text-red-600">{error.message}</p>
@@ -139,7 +154,7 @@ const Register = () => {
               id="password"
               label=""
               icon={Lock}
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               validation={{
                 required: 'Password is required',
@@ -149,6 +164,8 @@ const Register = () => {
                 },
               }}
               error={errors.password}
+              togglePassword={() => setShowPassword(!showPassword)}
+              showPassword={showPassword}
             />
 
             <div>
