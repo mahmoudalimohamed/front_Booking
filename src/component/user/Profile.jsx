@@ -503,7 +503,7 @@ const Profile = () => {
                   You haven't made any bookings yet.
                 </p>
                 <button
-                  onClick={() => navigate("/trips")}
+                  onClick={() => navigate("/")}
                   className="bg-[#A62C2C] hover:bg-[#8B2525] text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
                 >
                   <svg
