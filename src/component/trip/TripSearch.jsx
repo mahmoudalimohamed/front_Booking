@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import cover from '../../assets/cover.png';
@@ -13,6 +13,9 @@ const TripSearch = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const navigate = useNavigate();
+  
+  // Add ref for search results section
+  const searchResultsRef = useRef(null);
 
   // Fetch cities and areas on mount
   useEffect(() => {
@@ -33,6 +36,19 @@ const TripSearch = () => {
     setFormData({ ...formData, [e.target.name]: value });
     setSearchPerformed(false);
   };
+
+  // Add effect to scroll to results when search is performed
+  useEffect(() => {
+    if (searchPerformed && searchResultsRef.current) {
+      // Add a small delay to ensure DOM updates before scrolling
+      setTimeout(() => {
+        searchResultsRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }, 100);
+    }
+  }, [searchPerformed]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -93,7 +109,7 @@ const TripSearch = () => {
   }
 
   return (
-    <div className=" font-mono min-h-screen bg-cover bg-center  bg-no-repeat" style={{ backgroundImage: `url(${cover})` }}>
+    <div className="font-mono min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cover})` }}>
       <div className="min-h-screen bg-gradient-to-b from-transparent to-black/40 py-8 px-4">
         <div className="max-w-6xl mx-auto pt-16 pb-8"> <br />
          {/*  <h1 className="text-5xl font-bold text-white text-center mb-10">Book Your Royal Bus Now</h1> <br/> */}
@@ -209,8 +225,17 @@ const TripSearch = () => {
 
           {/* Search Results */}
           {searchPerformed && (
-            <div className="bg-gray-50 border-t border-gray-200 p-6 md:p-8">
-              <h3 className="text-xl font-semibold text-[#A62C2C] mb-6">Available Trips</h3>
+            <div 
+              ref={searchResultsRef} 
+              className={`bg-gray-50 border-t border-gray-200 p-6 md:p-8 ${searchPerformed ? 'animate-pulse-once' : ''}`}
+            >
+              <h3 className="text-xl font-semibold text-[#A62C2C] mb-6 flex items-center">
+                <span>Available Trips</span>
+                {/* Visual indicator that results are available */}
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  New Results
+                </span>
+              </h3>
               
               {trips.length > 0 ? (
                 <div className="space-y-4">
@@ -281,5 +306,4 @@ const TripSearch = () => {
     </div>
   );
 };
-
 export default TripSearch;
