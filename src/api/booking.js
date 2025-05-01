@@ -91,7 +91,7 @@ export const fetchProfileApi = async (page) => {
   if (!token) {
     throw new Error("No access token found");
   }
-  return axios.get(`http://localhost:8000/api/profile/?page=${page}&limit=5`, {
+  return axios.get(`https://mahmoudali0.pythonanywhere.com/api/profile/?page=${page}&limit=5`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
