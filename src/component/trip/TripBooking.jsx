@@ -1,16 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { userProfileApi, tripBookingApi, postTripBookingApi, confirmTripBookingApi, fetchPaymentKeyApi, redirectToPaymentApi } from "../../api/booking";
 import BusLayout from "./BusLayout";
 import MiniBusLayout from "./MiniBusLayout";
-import {
-  userProfileApi,
-  tripBookingApi,
-  postTripBookingApi,
-  confirmTripBookingApi,
-  fetchPaymentKeyApi,
-  redirectToPaymentApi,
-} from "../../api/booking";
 
 const TripBooking = () => {
   const { tripId } = useParams();
@@ -38,7 +30,6 @@ const TripBooking = () => {
     try {
       const { data } = await userProfileApi();
       setUserType(data.user.user_type);
-      console.log("User Type:", data.user.user_type);
     } catch (err) {
       setErrorMessage("Failed to fetch user type.");
       console.error("User type loading error:", err);
@@ -123,9 +114,6 @@ const TripBooking = () => {
       bookingData.customer_phone = customerPhone; 
     }
 
-    // Log the bookingData object here
-    console.log("Booking Data Sent to Backend:", bookingData);
-
     try {
       const response = await postTripBookingApi(tripId, bookingData);
       setTempBookingRef(response.data.temp_booking_ref);
@@ -154,8 +142,6 @@ const TripBooking = () => {
         confirmationData.customer_name = customerName;
         confirmationData.customer_phone = customerPhone;
       }
-
-      console.log("Confirmation Data Sent to Backend:", confirmationData);
 
       const response = await confirmTripBookingApi(
         tripId,
@@ -224,228 +210,250 @@ const TripBooking = () => {
   const totalCost = () => chosenSeats.length * (tripInfo?.price || 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 font-mono">
+    <div className="min-h-screen bg-gray-50 py-6 font-sans">
+      {/* Booking Confirmation Modal */}
       {showProcessingOverlay && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg max-w-md w-full mx-4 border border-gray-200">
-            <div className="flex flex-col items-center">
-              <div className="w-full mb-4 p-3 bg-red-50 border border-[#A62C2C] rounded-lg">
-                <p className="text-red-600 text-lg font-medium text-center">
-                  IMPORTANT <br /> Please Verify All Details Carefully.
-                  <br /> Once Confirmed Booking Cannot Be Refunded Or Changed.
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
+            <div className="bg-[#A62C2C] text-white p-4">
+              <h3 className="text-xl font-bold text-center">
+                Confirm Your Booking
+              </h3>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-red-50 border border-red-300 rounded-lg p-3 mb-4">
+                <p className="text-[#A62C2C] text-sm font-medium text-center">
+                  IMPORTANT: Please verify all details carefully.
+                  Once confirmed, booking cannot be refunded or changed.
                 </p>
               </div>
-              <div className="bg-white/80 p-4 rounded-lg w-full border border-gray-100 mb-4">
-                <div className="space-y-3">
-                  <div className="border-b border-gray-100 pb-3">
-                    <h4 className="text-lg font-semibold text-[#A62C2C] mb-2">
-                      Trip Details
-                    </h4>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">From</span>
-                      <span className="text-gray-900">
-                        {tripInfo?.start_location}
-                      </span>
-                    </p>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">To</span>
-                      <span className="text-gray-900">
-                        {tripInfo?.destination}
-                      </span>
-                    </p>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">Date</span>
-                      <span className="text-gray-900">
-                        {formatTime(tripInfo?.departure_date)}
-                      </span>
-                    </p>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">Bus Type</span>
-                      <span className="text-gray-900">
-                        {tripInfo?.bus_type}
-                      </span>
-                    </p>
+              
+              <div className="space-y-4 font-mono">
+                <div className="border-b pb-3 bg-[#A62C2C] text-white hover:bg-[#8B2525] font-mono">
+                  <h4 className="text-lg font-mono bg-[#A62C2C] text-white hover:bg-[#8B2525] mb-2">
+                    Trip Details
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">From</span>
+                      <span className="font-mono">{tripInfo?.start_location}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">To</span>
+                      <span className="font-mono">{tripInfo?.destination}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">Date</span>
+                      <span className="font-mono">{formatTime(tripInfo?.departure_date)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">Bus Type</span>
+                      <span className="font-mono">{tripInfo?.bus_type}</span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-[#A62C2C] mb-2">
-                      Booking Details
-                    </h4>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">Selected Seats</span>
-                      <span className="text-gray-900">
-                        {chosenSeats.join(", ")}
-                      </span>
-                    </p>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">Total Amount</span>
-                      <span className="text-gray-900">
-                        {totalCost().toFixed(2)} EGP
-                      </span>
-                    </p>
-                    <p className="text-lg text-[#A62C2C] flex justify-between">
-                      <span className="font-medium">Payment Method</span>
-                      <span className="text-gray-900">
-                        {paymentType === "online" ? "Visa" : "Cash"}
-                      </span>
-                    </p>
+                </div>
+                
+                <div>
+                  <h4 className="text-lg font-mono text-[#A62C2C] mb-2">
+                    Booking Details
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">Selected Seats</span>
+                      <span className="font-mono">{chosenSeats.join(", ")}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">Total Amount</span>
+                      <span className="font-mono">{totalCost().toFixed(2)} EGP</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-[#A62C2C]">Payment Method</span>
+                      <span className="font-mono">{paymentType === "online" ? "Visa" : "Cash"}</span>
+                    </div>
+                    
                     {userType === "Admin" && (
                       <>
-                        <p className="text-lg text-[#A62C2C] flex justify-between">
-                          <span className="font-medium">Customer Name</span>
-                          <span className="text-gray-900">{customerName}</span>
-                        </p>
-                        <p className="text-lg text-[#A62C2C] flex justify-between">
-                          <span className="font-medium">Customer Phone</span>
-                          <span className="text-gray-900">{customerPhone}</span>
-                        </p>
+                        <div className="flex justify-between text-sm">
+                          <span className="font-medium text-[#A62C2C]">Customer Name</span>
+                          <span className="font-mono">{customerName}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="font-medium text-[#A62C2C]">Customer Phone</span>
+                          <span className="font-mono">{customerPhone}</span>
+                        </div>
                       </>
                     )}
                   </div>
                 </div>
               </div>
-              <button
-                onClick={confirmBooking}
-                disabled={isProcessing || isConfirmed}
-                className="rounded-full bg-green-500 hover:bg-green-600 text-white px-8 py-2 text-lg font-medium transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {isProcessing ? "Processing..." : "Confirm"}
-              </button>
-              <button
-                onClick={handleCancelBooking}
-                disabled={isConfirmed}
-                className="mt-3 rounded-full bg-red-500 hover:bg-red-600 text-white px-8 py-2 text-lg font-medium transition-colors shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Cancel
-              </button>
+              
+              <div className="mt-6 flex space-x-3">
+                <button
+                  onClick={confirmBooking}
+                  disabled={isProcessing || isConfirmed}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? "Processing..." : "Confirm"}
+                </button>
+                <button
+                  onClick={handleCancelBooking}
+                  disabled={isConfirmed}
+                  className="flex-1 bg-[#A62C2C] hover:bg-[#A62C2C] text-white py-3 rounded-lg font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#A62C2C] mb-4">
-          Select Your Seats
-        </h2>
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Trip Info Card */}
         {tripInfo && (
-          <div className="p-6 flex flex-col md:flex-row justify-between justify-items-center">
-            <div className="flex-1 justify-items-center">
-              <div className="text-lg text-[#A62C2C] mb-1">From & To</div>
-              <div className="flex items-center mb-2">
-                <div className="h-2 w-2 bg-indigo-500 rounded-full mr-2"></div>
-                <span className="font-medium text-gray-900">
-                  {tripInfo.start_location}
-                </span>
-              </div>
-              <div className="border-l-2 border-dashed border-gray-300 h-4 ml-1"></div>
-              <div className="flex items-center">
-                <div className="h-2 w-2 bg-purple-500 rounded-full mr-2"></div>
-                <span className="font-medium text-gray-900">
-                  {tripInfo.destination}
-                </span>
-              </div>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6 font-mono">
+            <div className="bg-[#A62C2C] text-white p-4">
+              <h2 className="text-xl font-bold">Trip Details</h2>
             </div>
-            <div className="mt-4 md:mt-0 md:ml-6 flex-1">
-              <div className="text-lg text-[#A62C2C] mb-1">Departure Date</div>
-              <div className="font-medium">
-                {formatTime(tripInfo.departure_date)}
+            
+            <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm text-[#A62C2C]">Route</p>
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
+                    <span className="font-medium text-gray-900">{tripInfo.start_location}</span>
+                  </div>
+                  <div className="border-l-2 border-dashed border-gray-300 h-6 ml-1.5"></div>
+                  <div className="flex items-center">
+                    <div className="h-3 w-3 bg-purple-500 rounded-full mr-2"></div>
+                    <span className="font-medium text-gray-900">{tripInfo.destination}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="mt-4 md:mt-0 md:ml-6 flex-1">
-              <div className="text-lg text-[#A62C2C] mb-1">Bus Type</div>
-              <div className="font-medium">{tripInfo.bus_type}</div>
-            </div>
-            <div className="mt-4 md:mt-0 md:ml-6 flex-1">
-              <div className="text-lg text-[#A62C2C] mb-1">Seat Price</div>
-              <div className="font-medium">{tripInfo.price} EGP</div>
+              
+              <div className="space-y-1">
+                <p className="text-sm text-[#A62C2C]">Departure</p>
+                <p className="font-medium text-gray-900">{formatTime(tripInfo.departure_date)}</p>
+              </div>
+              
+              <div className="space-y-1">
+                <p className="text-sm text-[#A62C2C]">Bus Type</p>
+                <p className="font-medium text-gray-900">{tripInfo.bus_type}</p>
+              </div>
+              
+              <div className="space-y-1">
+                <p className="text-sm text-[#A62C2C]">Price Per Seat</p>
+                <p className="font-medium text-gray-900">{tripInfo.price} EGP</p>
+              </div>
             </div>
           </div>
         )}
-        <div className="justify-self-center justify-center">
-          {tripInfo?.bus_type === "MINI" ? (
-            <MiniBusLayout
-              availableSeats={availableSeats}
-              chosenSeats={chosenSeats}
-              unavailableSeats={unavailableSeats}
-              toggleSeatSelection={toggleSeatSelection}
-              loading={loading}
-            />
-          ) : (
-            <BusLayout
-              availableSeats={availableSeats}
-              chosenSeats={chosenSeats}
-              unavailableSeats={unavailableSeats}
-              toggleSeatSelection={toggleSeatSelection}
-              loading={loading}
-            />
-          )}
-        </div>
-        <br />
-        {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+
+        {/* Seat Selection Section */}
+                <div className="justify-self-center justify-center">
+                  {tripInfo?.bus_type === "MINI" ? (
+                    <MiniBusLayout
+                      availableSeats={availableSeats}
+                      chosenSeats={chosenSeats}
+                      unavailableSeats={unavailableSeats}
+                      toggleSeatSelection={toggleSeatSelection}
+                      loading={loading}
+                    />
+                  ) : (
+                    <BusLayout
+                      availableSeats={availableSeats}
+                      chosenSeats={chosenSeats}
+                      unavailableSeats={unavailableSeats}
+                      toggleSeatSelection={toggleSeatSelection}
+                      loading={loading}
+                    />
+                  )}
+                </div>
+
+        {/* Customer Details Section (Admin only) */}
         {userType === "Admin" && (
-          <div className="mb-4">
-            <label className="block text-lg text-[#A62C2C] mb-1">
-              Customer Name
-            </label>
-            <input
-              type="text"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="border-[#A62C2C] rounded-lg px-4 py-3 text-[#A62C2C] focus:ring-2 focus:ring-[#A62C2C] focus:outline-none transition duration-200 shadow-sm text-lg w-full"
-              placeholder="Enter customer name"
-              disabled={isSubmitting}
-            />
-            <label className="block text-lg text-[#A62C2C] mt-2 mb-1">
-              Customer Phone
-            </label>
-            <input
-              type="text"
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              className="border-[#A62C2C] rounded-lg px-4 py-3 text-[#A62C2C] focus:ring-2 focus:ring-[#A62C2C] focus:outline-none transition duration-200 shadow-sm text-lg w-full"
-              placeholder="Enter customer phone (11 digits)"
-              disabled={isSubmitting}
-            />
+          <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div className="bg-[#A62C2C] text-white p-4">
+              <h2 className="text-xl font-bold">Customer Details</h2>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#A62C2C] mb-1">
+                  Customer Name
+                </label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter customer name"
+                  disabled={isSubmitting}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-[#A62C2C] mb-1">
+                  Customer Phone
+                </label>
+                <input
+                  type="text"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter customer phone (11 digits)"
+                  disabled={isSubmitting}
+                />
+              </div>
+            </div>
           </div>
         )}
-        <div className="flex justify-between items-center justify-items-center mt-4">
-          <h2 className="text-lg font-semibold text-[#A62C2C]">
-            Total Price: {totalCost().toFixed(2)} EGP
-          </h2>
-          <div className="mb-4">
-            <label className="mr-4 text-lg text-[#A62C2C]">
-              Select Payment Method
-            </label>
-            {userType === "Admin" ? (
-              <span className="border-[#A62C2C] rounded-lg px-4 py-3 text-[#A62C2C] text-lg">
-                Cash
-              </span>
-            ) : (
-              <select
-                value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value)}
-                className="border-[#A62C2C] rounded-lg px-4 py-3 text-[#A62C2C] focus:ring-2 focus:ring-[#A62C2C] focus:outline-none transition duration-200 shadow-sm text-lg"
-                disabled={isSubmitting}
-              >
-                <option value="online">Visa</option>
-              </select>
-            )}
+
+        {/* Payment and Booking Section */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden font-mono">
+          <div className="bg-[#A62C2C] text-white hover:bg-[#8B2525] p-4">
+            <h2 className="text-xl font-bold">Payment Details</h2>
           </div>
-          <div className="space-x-4">
-            <button
-              onClick={initiateBooking}
-              disabled={isSubmitting}
-              className={`px-6 py-2 text-lg rounded-full transition ${
-                isSubmitting
-                  ? "bg-[#A62C2C] text-white hover:bg-[#8B2525] cursor-not-allowed"
-                  : "bg-[#A62C2C] text-white hover:bg-[#8B2525]"
-              }`}
-            >
-              {isSubmitting ? "Processing..." : "Book Seats"}
-            </button>
+          
+          <div className="p-4">
+            {errorMessage && (
+              <div className="bg-red-50 border border-red-200 text-[#A62C2C] p-3 rounded-lg mb-4">
+                {errorMessage}
+              </div>
+            )}
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+              <div>
+                <p className="text-sm text-[#A62C2C] mb-1">Total Price</p>
+                <p className="text-2xl font-bold text-[#A62C2C]">{totalCost().toFixed(2)} EGP</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-[#A62C2C] mb-1">
+                  Payment Method
+                </label>
+                <div className="text-2xl font-bold text-[#A62C2C]">
+                  {userType === "Admin" ? "Cash" : "Visa"}
+                </div>
+              </div>
+              
+              <div className="flex justify-center md:justify-end">
+                <button
+                  onClick={initiateBooking}
+                  disabled={isSubmitting || chosenSeats.length === 0}
+                  className="w-full md:w-auto px-6 py-3 bg-[#A62C2C] text-white hover:bg-[#8B2525] font-medium rounded-lg transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Processing..." : "Book Seats"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 export default TripBooking;
