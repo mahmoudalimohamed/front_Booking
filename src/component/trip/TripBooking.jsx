@@ -230,7 +230,7 @@ const TripBooking = () => {
               </div>
               
               <div className="space-y-4 font-mono">
-                <div className="border-b pb-3 bg-[#A62C2C] text-white hover:bg-[#8B2525] font-mono">
+                <div className="border-b pb-3 font-mono">
                   <h4 className="text-lg font-mono bg-[#A62C2C] text-white hover:bg-[#8B2525] mb-2">
                     Trip Details
                   </h4>
